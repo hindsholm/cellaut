@@ -1,21 +1,24 @@
+var app = angular.module('CellAut', []);
 
-function MyController($scope, $timeout) {
+app.service('canvas', function() {
     'use strict';
-
     var canvas = document.getElementById('canvas'),
-        context = canvas.getContext('2d'),
-        timer;
+        context = canvas.getContext('2d');
 
-    function scroll() {
+    this.scroll = function() {
         var imageData = context.getImageData(0, 1, canvas.width, canvas.height - 1);
         context.putImageData(imageData, 0, 0);
-    }
+    };
 
-    function drawLine(generation) {
-        var y = Math.min(generation, canvas.height - 1),
-            imageData = context.getImageData(0, y, canvas.width, 1),
-            data = imageData.data,
-            n = data.length;
+    this.drawLine = function(generation) {
+        var y, imageData, data, n;
+        if (generation >= canvas.height) {
+            scroll();
+        }
+        y = Math.min(generation, canvas.height - 1);
+        imageData = context.getImageData(0, y, canvas.width, 1);
+        data = imageData.data;
+        n = data.length;
         for (var i = 0; i < n; i += 4) {
             data[i] = i % 256;
             data[i + 1] = (2 * i) % 256;
@@ -23,13 +26,16 @@ function MyController($scope, $timeout) {
             data[i + 3] = 255;
         }
         context.putImageData(imageData, 0, y);
-    }
+    };
+});
+
+app.controller('CellAutCtrl', ['$scope', '$timeout', 'canvas', function($scope, $timeout, canvas) {
+    'use strict';
+
+    var timer;
 
     function nextGeneration() {
-        if ($scope.generation >= canvas.height) {
-            scroll();
-        }
-        drawLine($scope.generation);
+        canvas.drawLine($scope.generation);
         $scope.generation++;
     }
 
@@ -52,9 +58,9 @@ function MyController($scope, $timeout) {
     };
 
     $scope.$on("destroy", function() {
-        stop();
+        $scope.stop();
     });
 
     $scope.generation = 0;
 
-}
+}]);
