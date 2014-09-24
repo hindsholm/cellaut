@@ -1,19 +1,19 @@
-var app = angular.module('CellAutApp', []);
+/*jslint plusplus: true */
+/*global angular: false, document: false, console: false */
+
+var app = angular.module('CellAutApp', ['ui.bootstrap']);
 
 app.service('cellaut', function () {
     'use strict';
-    this.rule = [3, 3, 2, 2, 1, 1, 0, 0, 1, 1];
+    this.rule = [];
     this.cells = [];
     this.size = 0;
     this.generation = 0;
 
     this.init = function (size) {
-        var i;
         this.size = size;
-        for (i = 0; i < size; ++i) {
-            this.cells[i] = Math.floor(4 * Math.random());
-        }
         this.generation = 0;
+        this.randomize();
     };
 
     this.nextGeneration = function () {
@@ -27,73 +27,125 @@ app.service('cellaut', function () {
         this.generation += 1;
     };
 
-});
-
-app.service('canvas', function () {
-    'use strict';
-    var canvas = document.getElementById('canvas'),
-        context = canvas.getContext('2d');
-
-    this.scroll = function () {
-        var imageData = context.getImageData(0, 1, canvas.width, canvas.height - 1);
-        context.putImageData(imageData, 0, 0);
+    this.randomize = function () {
+        var i;
+        for (i = 0; i < 10; ++i) {
+            this.rule[i] = Math.floor(4 * Math.random());
+        }
+        for (i = 0; i < this.size; ++i) {
+            this.cells[i] = Math.floor(4 * Math.random());
+        }
     };
 
-    this.drawLine = function (cellaut) {
-        var y, imageData, data, n, i, cell;
-        if (cellaut.generation >= canvas.height) {
-            this.scroll();
-        }
-        y = Math.min(cellaut.generation, canvas.height - 1);
-        imageData = context.getImageData(0, y, canvas.width, 1);
-        data = imageData.data;
-        n = data.length;
-        for (i = 0; i < n; i += 4) {
-            cell = cellaut.cells[i / 4];
-            data[i] = (cell === 1) ? 255 : 0;
-            data[i + 1] = (cell === 2) ? 255 : 0;
-            data[i + 2] = (cell === 3) ? 255 : 0;
-            data[i + 3] = 255;
-        }
-        context.putImageData(imageData, 0, y);
-    };
 });
 
-app.controller('CellAutCtrl', ['$scope', '$timeout', 'canvas', 'cellaut', function ($scope, $timeout, canvas, cellaut) {
-    'use strict';
+app.controller('CellAutCtrl', ['$scope', '$timeout', '$window', 'cellaut',
+    function ($scope, $timeout, $window, cellaut) {
+        'use strict';
 
-    var timer;
+        var timer;
 
-    function nextGeneration () {
-        cellaut.nextGeneration();
-        canvas.drawLine(cellaut);
-        $scope.generation++;
-    }
-
-    function onTimeout() {
-        nextGeneration();
-        timer = $timeout(onTimeout, 50);
-    }
-
-    $scope.start = function () {
-        if (!timer) {
+        function onTimeout() {
+            cellaut.nextGeneration();
             timer = $timeout(onTimeout, 50);
         }
-    };
 
-    $scope.stop = function () {
-        if (timer) {
-            $timeout.cancel(timer);
-            timer = null;
+        $scope.start = function () {
+            if (!timer) {
+                timer = $timeout(onTimeout, 50);
+            }
+        };
+
+        $scope.stop = function () {
+            if (timer) {
+                $timeout.cancel(timer);
+                timer = null;
+            }
+        };
+
+        $scope.$on("destroy", function () {
+            $scope.stop();
+        });
+
+        $scope.cellaut = cellaut;
+
+    }]);
+
+app.directive('cellaut', ['$window', function ($window) {
+    'use strict';
+    
+    return {
+        restrict: 'A',
+        scope: {
+            model : '='
+        },
+        link: function (scope, element, atttributes) {
+            var canvas = element[0],  // gets the DOM element from Angular's element
+                context = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = element.parent().prop('clientWidth');
+                canvas.height = element.parent().prop('clientHeight');
+                scope.model.init(canvas.width);
+            }
+            
+            function scroll() {
+                var imageData = context.getImageData(0, 1, canvas.width, canvas.height - 1);
+                context.putImageData(imageData, 0, 0);
+            }
+
+            function drawLine() {
+                var model = scope.model, y, imageData, data, n, i, cell;
+                if (model.generation >= canvas.height) {
+                    scroll();
+                }
+                y = Math.min(model.generation, canvas.height - 1);
+                imageData = context.getImageData(0, y, canvas.width, 1);
+                data = imageData.data;
+                n = data.length;
+                for (i = 0; i < n; i += 4) {
+                    cell = model.cells[i / 4];
+                    data[i] = (cell === 1) ? 255 : 0;
+                    data[i + 1] = (cell === 2) ? 255 : 0;
+                    data[i + 2] = (cell === 3) ? 255 : 0;
+                    data[i + 3] = 255;
+                }
+                context.putImageData(imageData, 0, y);
+            }
+
+            scope.$watch('model.generation', function (newValue, oldValue) {
+                // console.log('Model change, generation = ' + scope.model.generation);
+                drawLine();
+            });
+            
+            angular.element($window).on('resize', function () {
+                scope.$apply(function () {
+                    resize();
+                });
+            });
+            
+            resize();
         }
+
     };
-
-    $scope.$on("destroy", function () {
-        $scope.stop();
-    });
-
-    $scope.generation = 0;
-    cellaut.init(600);
-    canvas.drawLine(cellaut);
 
 }]);
+
+app.directive('cellvalue', function () {
+    'use strict';
+    var OK_PATTERN = /^[0-3]$/;
+    return {
+        require: 'ngModel',
+        link: function (scope, elm, attrs, ctrl) {
+            ctrl.$parsers.unshift(function (viewValue) {
+                if (OK_PATTERN.test(viewValue)) {
+                    ctrl.$setValidity('cellvalue', true);
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('cellvalue', false);
+                    return 0;
+                }
+            });
+        }
+    };
+});
