@@ -2,7 +2,7 @@
 
 angular.module('CellAutApp')
 
-    .controller('CellAutCtrl', function ($scope, $timeout, $window, cellaut) {
+    .controller('CellAutCtrl', function ($scope, $timeout, cellaut) {
         'use strict';
 
         var timer;
@@ -12,13 +12,13 @@ angular.module('CellAutApp')
             timer = $timeout(onTimeout, 50);
         }
 
-        $scope.start = function () {
+        this.start = function start() {
             if (!timer) {
                 timer = $timeout(onTimeout, 50);
             }
         };
 
-        $scope.stop = function () {
+        this.stop = function stop() {
             if (timer) {
                 $timeout.cancel(timer);
                 timer = null;
@@ -29,6 +29,6 @@ angular.module('CellAutApp')
             $scope.stop();
         });
 
-        $scope.cellaut = cellaut;
+        this.cellaut = cellaut;
 
     });
