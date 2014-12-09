@@ -1,0 +1,19 @@
+{
+  "libs": [
+    "reserved",
+    "browser",
+    "chai",
+    "ecma5",
+    "browser",
+    "jquery",
+    "lodash"
+  ],
+  "loadEagerly": [],
+  "async": true,
+  "plugins": {
+    "doc_comment": {},
+    "component": {},
+    "angular": {},
+    "node": {}
+  }
+}

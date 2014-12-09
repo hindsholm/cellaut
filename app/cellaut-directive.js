@@ -54,8 +54,8 @@ angular.module('CellAutApp')
                     });
                 });
 
+                scope.model.init();
                 resize();
-                scope.model.init(canvas.width);
             }
 
         };
