@@ -45,7 +45,6 @@ angular.module('CellAutApp')
                 }
 
                 scope.$watch('model.generation', function (newValue, oldValue) {
-                    // console.log('Model change, generation = ' + scope.model.generation);
                     drawLine();
                 });
 
