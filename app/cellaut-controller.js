@@ -7,6 +7,8 @@ angular.module('CellAutApp')
 
         var timer,
             vm = this;
+            
+        vm.isRunning = false;
 
         function onTimeout() {
             cellaut.nextGeneration();
@@ -17,6 +19,7 @@ angular.module('CellAutApp')
             if (!timer) {
                 timer = $timeout(onTimeout, 50);
             }
+            vm.isRunning = true;
         };
 
         vm.stop = function stop() {
@@ -24,8 +27,9 @@ angular.module('CellAutApp')
                 $timeout.cancel(timer);
                 timer = null;
             }
+            vm.isRunning = false;
         };
-
+        
         $scope.$on("destroy", function () {
             vm.stop();
         });
