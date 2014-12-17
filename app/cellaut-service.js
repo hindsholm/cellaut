@@ -15,7 +15,7 @@ angular.module('CellAutApp')
             this.cells = [];
             this.size = 0;
             this.generation = 0;
-            this.randomRule();
+            this.randomize();
         };
 
         this.nextGeneration = function () {
@@ -39,10 +39,13 @@ angular.module('CellAutApp')
             }
         };
 
-        this.randomRule = function () {
+        this.randomize = function () {
             var i;
             for (i = 0; i < 10; ++i) {
                 this.rule[i] = Math.floor(4 * Math.random());
+            }
+            for (i = 0; i < this.size; ++i) {
+                this.cells[i] = Math.floor(4 * Math.random());
             }
         };
 
