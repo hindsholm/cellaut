@@ -5,20 +5,21 @@ angular.module('CellAutApp')
     .controller('CellAutCtrl', function ($scope, $timeout, cellaut) {
         'use strict';
 
-        var timer;
+        var timer,
+            vm = this;
 
         function onTimeout() {
             cellaut.nextGeneration();
             timer = $timeout(onTimeout, 50);
         }
 
-        this.start = function start() {
+        vm.start = function start() {
             if (!timer) {
                 timer = $timeout(onTimeout, 50);
             }
         };
 
-        this.stop = function stop() {
+        vm.stop = function stop() {
             if (timer) {
                 $timeout.cancel(timer);
                 timer = null;
@@ -26,9 +27,9 @@ angular.module('CellAutApp')
         };
 
         $scope.$on("destroy", function () {
-            $scope.stop();
+            vm.stop();
         });
 
-        this.cellaut = cellaut;
+        vm.cellaut = cellaut;
 
     });
