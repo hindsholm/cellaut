@@ -1,5 +1,3 @@
-/*global angular: false */
-
 angular.module('CellAutApp')
 
     .directive('cellaut', function ($window) {
@@ -8,9 +6,9 @@ angular.module('CellAutApp')
         return {
             restrict: 'A',
             scope: {
-                model : '='
+                model: '='
             },
-            link: function (scope, element, atttributes) {
+            link: function (scope, element) {
                 var canvas = element[0],  // gets the DOM element from Angular's element
                     context = canvas.getContext('2d');
 
@@ -44,7 +42,7 @@ angular.module('CellAutApp')
                     context.putImageData(imageData, 0, y);
                 }
 
-                scope.$watch('model.generation', function (newValue, oldValue) {
+                scope.$watch('model.generation', function () {
                     drawLine();
                 });
 

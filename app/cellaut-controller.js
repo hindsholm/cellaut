@@ -1,13 +1,11 @@
-/*global angular: false */
-
 angular.module('CellAutApp')
 
-    .controller('CellAutCtrl', function ($scope, $timeout, cellaut) {
+    .controller('CellAutController', function ($scope, $timeout, cellaut) {
         'use strict';
 
         var timer,
             vm = this;
-            
+
         vm.isRunning = false;
 
         function onTimeout() {
@@ -29,7 +27,7 @@ angular.module('CellAutApp')
             }
             vm.isRunning = false;
         };
-        
+
         $scope.$on("destroy", function () {
             vm.stop();
         });

@@ -1,18 +1,10 @@
 {
+  "ecmaVersion": 5,
   "libs": [
-    "reserved",
-    "browser",
-    "chai",
-    "ecma5",
-    "browser",
-    "jquery",
-    "lodash"
+    "browser"
   ],
-  "loadEagerly": [],
-  "async": true,
   "plugins": {
     "doc_comment": {},
-    "component": {},
     "angular": {},
     "node": {}
   }

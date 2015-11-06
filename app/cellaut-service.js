@@ -1,6 +1,3 @@
-/*jslint plusplus: true */
-/*global angular: false */
-
 angular.module('CellAutApp')
 
     .service('cellaut', function () {
@@ -10,7 +7,7 @@ angular.module('CellAutApp')
         this.cells = [];
         this.size = 0;
         this.generation = 0;
-    
+
         this.init = function () {
             this.cells = [];
             this.size = 0;
