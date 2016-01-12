@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cellular Automaton</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/app.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="app/css/app.css" rel="stylesheet">
 </head>
 
 <body ng-controller="CellAutController as vm">
@@ -40,12 +40,12 @@
         <canvas cellaut model="vm.cellaut"></canvas>
     </div>
 
-    <script src="lib/angular.min.js"></script>
-    <script src="lib/ui-bootstrap-tpls-0.11.0.min.js"></script>
-    <script src="app.js"></script>
-    <script src="cellaut-service.js"></script>
-    <script src="cellaut-controller.js"></script>
-    <script src="cellaut-directive.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/cellaut-service.js"></script>
+    <script src="app/cellaut-controller.js"></script>
+    <script src="app/cellaut-directive.js"></script>
 </body>
 
 </html>

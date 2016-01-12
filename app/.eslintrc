@@ -8,13 +8,6 @@ rules:
 
 globals:
   angular: false
-  beforeEach: false
-  describe: false
-  expect: false
-  inject: false
-  it: false
-  module: false
-  sinon: false
 
 plugins:
   - angular
@@ -35,4 +28,3 @@ angular/ng_on_watch: 2
 angular/ng_service_name: [2, '/[A-Z].*Service$/']
 angular/ng_timeout_service: 2
 angular/ng_window_service: 2
-
